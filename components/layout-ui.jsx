@@ -25,43 +25,14 @@ import {
   DropdownTrigger,
   DropdownMenu,
 } from "@nextui-org/react";
+import DataModel from "@/data.json";
 
 const navigation = [
   { name: "Home", href: "/", icon: Home, current: true },
   { name: "My Files", href: "/my-files", icon: Files, current: false },
-  {
-    name: "Shared with me",
-    href: "/shared-files",
-    icon: FileInput,
-    current: false,
-  },
+  {name: "Shared with me",href: "/shared-files", icon: FileInput, current: false},
 ];
-const projects = [
-  {
-    id: 1,
-    name: "Heroicons",
-    models: "4",
-    href: "",
-    initial: "H",
-    current: false,
-  },
-  {
-    id: 2,
-    name: "Tailwind Labs",
-    models: "8",
-    href: "#",
-    initial: "T",
-    current: false,
-  },
-  {
-    id: 3,
-    name: "Workcation",
-    models: "10",
-    href: "#",
-    initial: "W",
-    current: false,
-  },
-];
+
 const userNavigation = [
   { name: "Your profile", href: "#" },
   { name: "Sign out", href: "#" },
@@ -219,12 +190,9 @@ export default function LayoutUi({ children }) {
                             Your projects
                           </div>
                           <ul role="list" className="-mx-2 mt-2 space-y-1">
-                            {projects.map((project) => (
-                              <Link
-                                key={project.id}
-                                href={`/project/${project.id}`}
-                              >
-                                <ProjectItem key={project.id} {...project} />
+                            {DataModel.map((data) => (
+                              <Link key={data.id} href={`/project/${data.id}`}>
+                                <ProjectItem key={data.id} {...data} />
                               </Link>
                             ))}
                           </ul>
@@ -339,9 +307,9 @@ export default function LayoutUi({ children }) {
                     <NewProjectModal />
                   </div>
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {projects.map((project) => (
-                      <li key={project.id}>
-                        <ProjectItem key={project.id} {...project} />
+                    {DataModel.map((data) => (
+                      <li key={data.id}>
+                        <ProjectItem key={data.id} {...data} />
                       </li>
                     ))}
                   </ul>
@@ -393,7 +361,6 @@ export default function LayoutUi({ children }) {
 
 function ProjectItem({ ...props }) {
   const pathname = usePathname();
-
   return (
     <div className="relative">
       <Link
@@ -412,15 +379,21 @@ function ProjectItem({ ...props }) {
             <div className="relative inline-block">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gray-500">
                 <span className="text-sm font-medium leading-none text-white">
-                  {props.initial}
+                  {props.Initials}
                 </span>
               </span>
-              <span className="absolute right-0.5 top-0.5 block h-2 w-2 -translate-y-1/2 translate-x-1/2 transform rounded-full bg-green-400  " />
+              <span
+                className={clsx(
+                  "absolute right-0.5 top-0.5 block h-2 w-2 -translate-y-1/2 translate-x-1/2 transform rounded-full",
+                  { "bg-green-400": props.Messages === "true" },
+                  { "bg-gray-600": props.Messages === "false" }
+                )}
+              />
             </div>
             <div className="flex flex-col ml-4">
-              <p className="  text-sm ">{props.name}</p>
+              <p className="  text-sm ">{props.Name}</p>
               <p className=" font-normal text-xs ">
-                {props.models + " " + "Models"}{" "}
+                {props.Model_Quantity + " " + "Models"}{" "}
               </p>
             </div>
           </div>
