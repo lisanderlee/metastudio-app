@@ -19,7 +19,7 @@ export default function CardFile() {
     <Card isPressable isHoverable className="py-1 pb-2 w-64">
       <CardBody className="overflow-visible py-2">
         <div className="absolute  z-30 top-5 left-5">
-          <ChipStatus />
+          <ChipStatus status="primary"/>
         </div>
         <Image
           alt="Card background"
