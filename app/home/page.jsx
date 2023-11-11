@@ -12,11 +12,7 @@ export default function Home() {
           <Button size="sm">See all</Button>
         </div>
         <div className="flex flex-row gap-x-4">
-          <CardFile />
-          <CardFile />
-          <CardFile />
-          <CardFile />
-          <CardFile />
+    
         </div>
       </div>
     </div>

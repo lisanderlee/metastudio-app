@@ -5,6 +5,7 @@ import NewProjectModal from "./modal-new-project";
 import { Home, Files, FileInput, Bell, Search, Star } from "lucide-react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import clsx from "clsx";
 import {
   Bars3Icon,
@@ -20,6 +21,9 @@ import {
   Breadcrumbs,
   BreadcrumbItem,
   DropdownItem,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
 } from "@nextui-org/react";
 
 const navigation = [
@@ -37,7 +41,7 @@ const projects = [
     id: 1,
     name: "Heroicons",
     models: "4",
-    href: "#",
+    href: "",
     initial: "H",
     current: false,
   },
@@ -163,7 +167,7 @@ export default function LayoutUi({ children }) {
                             {userNavigation.map((item) => (
                               <Menu.Item key={item.name}>
                                 {({ active }) => (
-                                  <a
+                                  <Link
                                     href={item.href}
                                     className={classNames(
                                       active ? "bg-gray-200" : "",
@@ -171,7 +175,7 @@ export default function LayoutUi({ children }) {
                                     )}
                                   >
                                     {item.name}
-                                  </a>
+                                  </Link>
                                 )}
                               </Menu.Item>
                             ))}
@@ -185,7 +189,7 @@ export default function LayoutUi({ children }) {
                           <ul role="list" className="-mx-2 space-y-1">
                             {navigation.map((item) => (
                               <li key={item.name}>
-                                <a
+                                <Link
                                   href={item.href}
                                   className={clsx(
                                     "text-gray-400 hover:text-white hover:bg-neutral-800",
@@ -205,7 +209,7 @@ export default function LayoutUi({ children }) {
                                     />
                                     {item.name}
                                   </div>
-                                </a>
+                                </Link>
                               </li>
                             ))}
                           </ul>
@@ -216,7 +220,12 @@ export default function LayoutUi({ children }) {
                           </div>
                           <ul role="list" className="-mx-2 mt-2 space-y-1">
                             {projects.map((project) => (
-                              <ProjectItem key={project.id} {...project} />
+                              <Link
+                                key={project.id}
+                                href={`/project/${project.id}`}
+                              >
+                                <ProjectItem key={project.id} {...project} />
+                              </Link>
                             ))}
                           </ul>
                         </li>
@@ -296,7 +305,7 @@ export default function LayoutUi({ children }) {
                   >
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        <a
+                        <Link
                           href={item.href}
                           className={clsx(
                             "text-gray-400 hover:text-white hover:bg-neutral-800",
@@ -316,7 +325,7 @@ export default function LayoutUi({ children }) {
                             />
                             {item.name}
                           </div>
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -331,7 +340,9 @@ export default function LayoutUi({ children }) {
                   </div>
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
                     {projects.map((project) => (
-                      <ProjectItem key={project.id} {...project} />
+                      <li key={project.id}>
+                        <ProjectItem key={project.id} {...project} />
+                      </li>
                     ))}
                   </ul>
                 </li>
@@ -354,7 +365,7 @@ export default function LayoutUi({ children }) {
             <div className="flex  justify-between items-center flex-1 gap-x-4 self-stretch lg:gap-x-6">
               {/*------------------------>Components in file<------------------------*/}
               <Crums />
-              <div className="flex items-center gap-x-4 lg:gap-x-6">
+              <div className="flex items-center gap-x-4 lg:gap-x-2">
                 <Button size="sm" color="secondary" variant="shadow">
                   Upgrade
                 </Button>
@@ -381,15 +392,19 @@ export default function LayoutUi({ children }) {
 }
 
 function ProjectItem({ ...props }) {
+  const pathname = usePathname();
+
   return (
-    <li key={props.key}>
-      <a
-        href={props.href}
-        className={classNames(
-          props.current
-            ? "bg-gray-800 text-white"
-            : "text-gray-400 hover:text-white hover:bg-gray-800",
-          "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+    <div className="relative">
+      <Link
+        key={props.id}
+        href={`/project/${props.id}`}
+        className={clsx(
+          "text-gray-400 hover:text-white hover:bg-neutral-800",
+          "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-normal",
+          {
+            "bg-neutral-800   text-white": pathname === "/project/" + props.id,
+          }
         )}
       >
         <div className="flex w-full  items-center flex-row justify-between">
@@ -409,24 +424,13 @@ function ProjectItem({ ...props }) {
               </p>
             </div>
           </div>
-          <div>
-            <Popover placement="right">
-              <PopoverTrigger>
-                <Button variant="light" size="sm" isIconOnly>
-                  <BiDotsVerticalRounded size={20} />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <div className="px-1 py-2">
-                  <div className="text-small font-bold">Popover Content</div>
-                  <div className="text-tiny">This is the popover content</div>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
         </div>
-      </a>
-    </li>
+      </Link>
+      <div className="absolute top-3 right-2">
+        {/*------------------------>Components in file<------------------------*/}
+        <ProjectDropdown />
+      </div>
+    </div>
   );
 }
 
@@ -442,11 +446,7 @@ function Notifications() {
         color="danger"
       >
         <PopoverTrigger>
-          <Button
-            size="sm"
-            aria-label="more than 99 notifications"
-            variant="light"
-          >
+          <Button size="sm" aria-label="more than 99 notifications">
             <Bell size={20} />
           </Button>
         </PopoverTrigger>
@@ -470,5 +470,29 @@ function Crums() {
       <BreadcrumbItem>Album</BreadcrumbItem>
       <BreadcrumbItem>Song</BreadcrumbItem>
     </Breadcrumbs>
+  );
+}
+
+function ProjectDropdown() {
+  return (
+    <Dropdown>
+      <DropdownTrigger>
+        <Button variant="light" size="sm" isIconOnly>
+          <BiDotsVerticalRounded size={20} />
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu
+        aria-label="Action event example"
+        onAction={(key) => alert(key)}
+        topContent
+      >
+        <DropdownItem key="new">New file</DropdownItem>
+        <DropdownItem key="copy">Copy link</DropdownItem>
+        <DropdownItem key="edit">Edit file</DropdownItem>
+        <DropdownItem key="delete" className="text-danger" color="danger">
+          Delete file
+        </DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
   );
 }
