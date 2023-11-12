@@ -3,10 +3,14 @@
 import React from "react";
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
 import { Plus } from "lucide-react";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 export default function NewProjectModal() {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
-
+  function handleClick() {
+    setOpen(false);
+    toast.success("Project was succefully created");
+  }
   return (
     <>
       <Button onPress={onOpen} variant="light" size="sm" isIconOnly><Plus size={16} /></Button>
@@ -38,8 +42,8 @@ export default function NewProjectModal() {
                 <Button color="danger" variant="light" onPress={onClose}>
                   Close
                 </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
+                <Button color="primary" onPress={handleClick}>
+                  Create
                 </Button>
               </ModalFooter>
             </>

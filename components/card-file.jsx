@@ -14,8 +14,22 @@ import Image from "next/image";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import ChipStatus from "./chip-status";
 import clsx from "clsx";
-
+import { useState } from "react";
+import DeleteModal from "./modals/modal-delete";
+import ShareFileReviewModal from "./modals/modal-share-file-review";
+import RenameModal from "./modals/modal-rename";
+import ShareFilePresentationModal from "./modals/modal-share-file-presentation";
+import AddNewVersionModal from "./modals/modal-add-new-version";
+import FileInformationModal from "./modals/modal-file-info";
 export default function CardFile({ ...props }) {
+  const [showDelete, setShowDelete] = useState(false);
+  const [showShareFileReview, setShowShareFileReview] = useState(false);
+  const [showShareFilePresentation, setShowShareFilePresentation] =
+    useState(false);
+  const [showRename, setShowRename] = useState(false);
+  const [showAddNewVersion, setShowAddNewVersion] = useState(false);
+  const [showFileInfo, setShowFileInfo] = useState(false);
+
   return (
     <>
       <div className="relative isolate">
@@ -39,7 +53,11 @@ export default function CardFile({ ...props }) {
                   {props.Edited}
                 </p>
                 <small className="text-default-500 text-left">
-                  {props.Versions.length + " " + "version"}
+                  {props.Versions && props.Versions.length > 0
+                    ? `${props.Versions.length} version${
+                        props.Versions.length > 1 ? "s" : ""
+                      }`
+                    : "-"}
                 </small>
               </div>
               <span
@@ -57,33 +75,100 @@ export default function CardFile({ ...props }) {
           </CardHeader>
         </Card>
         <div className="absolute right-4 bottom-2">
-          {/*------------------------>Components in file<------------------------*/}
-          <CardFileDropdown />
+          {/*------------------------>File Dropdown Menu<------------------------*/}
+          <Dropdown>
+            <DropdownTrigger>
+              <Button variant="light" size="sm" isIconOnly>
+                <BiDotsVerticalRounded size={20} />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              disabledKeys={
+                props.Versions && props.Versions.length > 0 ? "" : ["versions"]
+              }
+              aria-label="Action event example"
+            >
+              <DropdownItem
+                key="share"
+                onPress={() => {
+                  setShowShareFileReview(true);
+                }}
+              >
+                Share for review
+              </DropdownItem>
+              <DropdownItem
+                key="share"
+                showDivider
+                onPress={() => {
+                  setShowShareFilePresentation(true);
+                }}
+              >
+                Share for presentation
+              </DropdownItem>
+              <DropdownItem
+                key="newversion"
+                onPress={() => {
+                  setShowFileInfo(true);
+                }}
+              >
+                File Information
+              </DropdownItem>
+
+              <DropdownItem
+                key="newversion"
+                onPress={() => {
+                  setShowShareFilePresentation(true);
+                }}
+              >
+                Add new version
+              </DropdownItem>
+              <DropdownItem
+                href={`/project/versions/${props.id}`}
+                key="versions"
+              >
+                See versions
+              </DropdownItem>
+              <DropdownItem key="duplicate">Duplicate</DropdownItem>
+              <DropdownItem
+                key="rename"
+                showDivider
+                onPress={() => {
+                  setShowRename(true);
+                }}
+              >
+                Rename
+              </DropdownItem>
+              <DropdownItem
+                onPress={() => {
+                  setShowDelete(true);
+                }}
+                key="delete"
+                className="text-danger"
+                color="danger"
+              >
+                Delete file
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
+
+        {/*------------------------>Modals<------------------------*/}
+        <ShareFileReviewModal
+          open={showShareFileReview}
+          setOpen={setShowShareFileReview}
+        />
+        <ShareFilePresentationModal
+          open={showShareFilePresentation}
+          setOpen={setShowShareFilePresentation}
+        />
+        <AddNewVersionModal
+          open={showAddNewVersion}
+          setOpen={setShowAddNewVersion}
+        />
+        <FileInformationModal open={showFileInfo} setOpen={setShowFileInfo} />
+        <RenameModal open={showRename} setOpen={setShowRename} />
+        <DeleteModal open={showDelete} setOpen={setShowDelete} />
       </div>
     </>
-  );
-}
-
-function CardFileDropdown() {
-  return (
-    <Dropdown>
-      <DropdownTrigger>
-        <Button variant="light" size="sm" isIconOnly>
-          <BiDotsVerticalRounded size={20} />
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu
-        aria-label="Action event example"
-        onAction={(key) => alert(key)}
-      >
-        <DropdownItem key="new">New file</DropdownItem>
-        <DropdownItem key="copy">Copy link</DropdownItem>
-        <DropdownItem key="edit">Edit file</DropdownItem>
-        <DropdownItem key="delete" className="text-danger" color="danger">
-          Delete file
-        </DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
   );
 }

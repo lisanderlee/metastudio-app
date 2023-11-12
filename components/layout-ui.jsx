@@ -1,17 +1,17 @@
 "use client";
 import { Fragment, useState } from "react";
-import { Dialog, Menu, Transition } from "@headlessui/react";
-import NewProjectModal from "./modal-new-project";
-import { Home, Files, FileInput, Bell, Search, Star } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import NewProjectModal from "./modals/modal-new-project";
+import { Home, Files, FileInput, Bell } from "lucide-react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import clsx from "clsx";
-import {
-  Bars3Icon,
-  XMarkIcon,
-  ChevronDownIcon,
-} from "@heroicons/react/24/outline";
+import ProjectInfoModal from "./modals/modal-project-info";
+import ProjectLeaveModal from "./modals/modal-leave-project";
+import DeleteModal from "./modals/modal-delete";
+import ProjectSettingsModal from "./modals/modal-file-info";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import {
   Popover,
   PopoverTrigger,
@@ -24,11 +24,13 @@ import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
+  User,
 } from "@nextui-org/react";
+
 import DataModel from "@/data.json";
 
 const navigation = [
-  { name: "Home", href: "/", icon: Home, current: true },
+  { name: "Home", href: "/home", icon: Home, current: true },
   { name: "My Files", href: "/my-files", icon: Files, current: false },
   {
     name: "Shared with me",
@@ -38,11 +40,6 @@ const navigation = [
   },
 ];
 
-const userNavigation = [
-  { name: "Your profile", href: "#" },
-  { name: "Sign out", href: "#" },
-];
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -50,9 +47,12 @@ function classNames(...classes) {
 export default function LayoutUi({ children }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <>
       <div>
+        {/*------------------------>Side Bar Mobile Version<------------------------*/}
+
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"
@@ -105,60 +105,46 @@ export default function LayoutUi({ children }) {
                       </button>
                     </div>
                   </Transition.Child>
-                  {/* Sidebar component, swap this element with another sidebar if you like */}
                   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-950 px-6 pb-4">
                     <div className="flex h-16 shrink-0 items-center">
                       {/*------------------------>Profile Dropdown Mobile Version<------------------------*/}
-                      <Menu as="div" className="relative">
-                        <Menu.Button className="-m-1.5 flex items-center p-1.5">
-                          <span className="sr-only">Open user menu</span>
-                          <img
-                            className="h-8 w-8 rounded-full bg-gray-50"
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                            alt=""
+                      <Dropdown placement="bottom-start">
+                        <DropdownTrigger>
+                          <User
+                            as="button"
+                            avatarProps={{
+                              isBordered: true,
+                              src: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
+                            }}
+                            className="transition-transform"
+                            description="@tonyreichert"
+                            name="Tony Reichert"
                           />
-                          <span className=" flex flex-row items-center lg:items-center">
-                            <span
-                              className="ml-4 text-sm font-semibold leading-6 text-gray-300"
-                              aria-hidden="true"
-                            >
-                              Tom Cook
-                            </span>
-                            <ChevronDownIcon
-                              className="ml-2 h-5 w-5 text-gray-400"
-                              aria-hidden="true"
-                            />
-                          </span>
-                        </Menu.Button>
-                        <Transition
-                          as={Fragment}
-                          enter="transition ease-out duration-100"
-                          enterFrom="transform opacity-0 scale-95"
-                          enterTo="transform opacity-100 scale-100"
-                          leave="transition ease-in duration-75"
-                          leaveFrom="transform opacity-100 scale-100"
-                          leaveTo="transform opacity-0 scale-95"
-                        >
-                          <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                            {userNavigation.map((item) => (
-                              <Menu.Item key={item.name}>
-                                {({ active }) => (
-                                  <Link
-                                    href={item.href}
-                                    className={classNames(
-                                      active ? "bg-gray-200" : "",
-                                      "block px-3 py-1 text-sm leading-6 text-gray-900"
-                                    )}
-                                  >
-                                    {item.name}
-                                  </Link>
-                                )}
-                              </Menu.Item>
-                            ))}
-                          </Menu.Items>
-                        </Transition>
-                      </Menu>
+                        </DropdownTrigger>
+                        <DropdownMenu aria-label="User Actions" variant="flat">
+                          <DropdownItem key="profile" className="h-14 gap-2">
+                            <p className="font-bold">Signed in as</p>
+                            <p className="font-bold">@tonyreichert</p>
+                          </DropdownItem>
+                          <DropdownItem href="/user/profile" key="settings">
+                            My Settings
+                          </DropdownItem>
+                          <DropdownItem href="/user/teams" key="team_settings">
+                            Team Settings
+                          </DropdownItem>
+                          <DropdownItem
+                            href="/user/help"
+                            key="help_and_feedback"
+                          >
+                            Help & Feedback
+                          </DropdownItem>
+                          <DropdownItem key="logout" color="danger">
+                            Log Out
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </Dropdown>
                     </div>
+                    {/*------------------------>Main Navigation Mobile Version<------------------------*/}
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
@@ -191,6 +177,7 @@ export default function LayoutUi({ children }) {
                           </ul>
                         </li>
                         <li>
+                          {/*------------------------>Projects Navigation Mobile Version<------------------------*/}
                           <div className="text-xs font-semibold leading-6 text-gray-400">
                             Your projects
                           </div>
@@ -211,61 +198,46 @@ export default function LayoutUi({ children }) {
           </Dialog>
         </Transition.Root>
 
-        {/* Static sidebar for desktop */}
+        {/* ------------------------>Static sidebar for desktop <------------------------*/}
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto   px-6 pb-4">
             <div className="flex h-16 shrink-0 items-center">
               {/*------------------------>Profile Dropdown<------------------------*/}
-              <Menu as="div" className="relative">
-                <Menu.Button className="-m-1.5 flex items-center p-1.5">
-                  <span className="sr-only">Open user menu</span>
-                  <img
-                    className="h-8 w-8 rounded-full bg-gray-50"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt=""
-                  />
-                  <span className="hidden lg:flex lg:items-center">
-                    <span
-                      className="ml-4 text-sm font-semibold leading-6 text-gray-300"
-                      aria-hidden="true"
-                    >
-                      Tom Cook
-                    </span>
-                    <ChevronDownIcon
-                      className="ml-2 h-5 w-5 text-gray-400"
-                      aria-hidden="true"
+              <div className="mt-2">
+                <Dropdown placement="bottom-start">
+                  <DropdownTrigger>
+                    <User
+                      as="button"
+                      avatarProps={{
+                        isBordered: true,
+                        src: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
+                      }}
+                      className="transition-transform"
+                      description="@tonyreichert"
+                      name="Tony Reichert"
                     />
-                  </span>
-                </Menu.Button>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                    {userNavigation.map((item) => (
-                      <Menu.Item key={item.name}>
-                        {({ active }) => (
-                          <a
-                            href={item.href}
-                            className={classNames(
-                              active ? "bg-gray-50" : "",
-                              "block px-3 py-1 text-sm leading-6 text-gray-900"
-                            )}
-                          >
-                            {item.name}
-                          </a>
-                        )}
-                      </Menu.Item>
-                    ))}
-                  </Menu.Items>
-                </Transition>
-              </Menu>
+                  </DropdownTrigger>
+                  <DropdownMenu aria-label="User Actions" variant="flat">
+                    <DropdownItem     showDivider key="profile" className="h-14 gap-2">
+                      <p className="font-bold">Signed in as</p>
+                      <p className="font-bold">@tonyreichert</p>
+                    </DropdownItem>
+                    <DropdownItem href="/user/profile" key="settings">
+                      My Settings
+                    </DropdownItem>
+                    <DropdownItem href="/user/teams" key="team_settings">
+                      Team Settings
+                    </DropdownItem>
+                    <DropdownItem     showDivider href="/user/help" key="help_and_feedback">
+                      Help & Feedback
+                    </DropdownItem>
+                    <DropdownItem key="logout" color="danger">
+                      Log Out
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
             </div>
 
             {/*------------------------>Navigation Main Menut<------------------------*/}
@@ -366,6 +338,10 @@ export default function LayoutUi({ children }) {
 
 function ProjectItem({ ...props }) {
   const pathname = usePathname();
+  const [showDelete, setShowDelete] = useState(false);
+  const [showProjectSettings, setShowProjectSettings] = useState(false);
+  const [showProjectLeave, setShowProjectLeave] = useState(false);
+  const [showProjectInfo, setShowProjectInfo] = useState(false);
   return (
     <div className="relative">
       <Link
@@ -405,9 +381,54 @@ function ProjectItem({ ...props }) {
         </div>
       </Link>
       <div className="absolute top-3 right-2">
-        {/*------------------------>Components in file<------------------------*/}
-        <ProjectDropdown />
+        {/*------------------------>Project Settings Dropdown<------------------------*/}
+        <Dropdown>
+          <DropdownTrigger>
+            <Button variant="light" size="sm" isIconOnly>
+              <BiDotsVerticalRounded size={20} />
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu aria-label="Action event example">
+            <DropdownItem
+              key="information"
+              onPress={() => {
+                setShowProjectInfo(true);
+              }}
+            >
+              Project infonformation
+            </DropdownItem>
+            <DropdownItem
+              key="leave"
+              showDivider
+              onPress={() => {
+                setShowProjectLeave(true);
+              }}
+            >
+              Leave Project
+            </DropdownItem>
+            <DropdownItem
+              key="delete"
+              className="text-danger"
+              color="danger"
+              onPress={() => {
+                setShowDelete(true);
+              }}
+            >
+              Delete Project
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       </div>
+      <ProjectSettingsModal
+        open={showProjectSettings}
+        setOpen={setShowProjectSettings}
+      />
+      <ProjectInfoModal open={showProjectInfo} setOpen={setShowProjectInfo} />
+      <ProjectLeaveModal
+        open={showProjectLeave}
+        setOpen={setShowProjectLeave}
+      />
+      <DeleteModal open={showDelete} setOpen={setShowDelete} />
     </div>
   );
 }
@@ -440,43 +461,11 @@ function Notifications() {
 }
 
 function Crums() {
-  const pathname = usePathname();
-  const segments = pathname.split("/");
-  console.log(segments[1]);
+  const paths = usePathname();
+  const pathNames = paths.split("/").filter((path) => path);
   return (
     <Breadcrumbs>
-      <BreadcrumbItem>segments</BreadcrumbItem>
-      <ul>
-        {segments.map((segment, index) => (
-          <li key={index}>
-            <BreadcrumbItem>{segment}</BreadcrumbItem>
-          </li>
-        ))}
-      </ul>
+      <BreadcrumbItem>{pathNames}</BreadcrumbItem>
     </Breadcrumbs>
-  );
-}
-
-function ProjectDropdown() {
-  return (
-    <Dropdown>
-      <DropdownTrigger>
-        <Button variant="light" size="sm" isIconOnly>
-          <BiDotsVerticalRounded size={20} />
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu
-        aria-label="Action event example"
-        onAction={(key) => alert(key)}
-        topContent
-      >
-        <DropdownItem key="new">New file</DropdownItem>
-        <DropdownItem key="copy">Copy link</DropdownItem>
-        <DropdownItem key="edit">Edit file</DropdownItem>
-        <DropdownItem key="delete" className="text-danger" color="danger">
-          Delete file
-        </DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
   );
 }
