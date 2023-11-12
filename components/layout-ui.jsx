@@ -30,7 +30,12 @@ import DataModel from "@/data.json";
 const navigation = [
   { name: "Home", href: "/", icon: Home, current: true },
   { name: "My Files", href: "/my-files", icon: Files, current: false },
-  {name: "Shared with me",href: "/shared-files", icon: FileInput, current: false},
+  {
+    name: "Shared with me",
+    href: "/shared-files",
+    icon: FileInput,
+    current: false,
+  },
 ];
 
 const userNavigation = [
@@ -320,7 +325,7 @@ export default function LayoutUi({ children }) {
         </div>
         {/*------------------------>NavBar Section<------------------------*/}
         <div className="lg:pl-72 ">
-          <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 px-4  sm:gap-x-6 sm:px-6 lg:px-8">
+          <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 px-4 bg-black sm:gap-x-6 sm:px-6 lg:px-8">
             {/*------------------------>Menu Button For Mobile<------------------------*/}
             <button
               type="button"
@@ -349,8 +354,8 @@ export default function LayoutUi({ children }) {
               </div>
             </div>
           </div>
-
-          <main className="py-10">
+          {/*------------------------>Content<------------------------*/}
+          <main className="py-7">
             <div className="px-4 sm:px-6 lg:px-8">{children}</div>
           </main>
         </div>
@@ -435,13 +440,19 @@ function Notifications() {
 }
 
 function Crums() {
+  const pathname = usePathname();
+  const segments = pathname.split("/");
+  console.log(segments[1]);
   return (
     <Breadcrumbs>
-      <BreadcrumbItem>Home</BreadcrumbItem>
-      <BreadcrumbItem>Music</BreadcrumbItem>
-      <BreadcrumbItem>Artist</BreadcrumbItem>
-      <BreadcrumbItem>Album</BreadcrumbItem>
-      <BreadcrumbItem>Song</BreadcrumbItem>
+      <BreadcrumbItem>segments</BreadcrumbItem>
+      <ul>
+        {segments.map((segment, index) => (
+          <li key={index}>
+            <BreadcrumbItem>{segment}</BreadcrumbItem>
+          </li>
+        ))}
+      </ul>
     </Breadcrumbs>
   );
 }
