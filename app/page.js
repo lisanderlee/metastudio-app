@@ -60,14 +60,14 @@ export default function Home() {
           </p>
           <Button size="sm">See all</Button>
         </div>
-
+{/* 
           <ul role="list" className="flex flex-row flex-wrap gap-x-4 gap-y-4">
             {files.map((file) => (
               <li key={file.id}>
               <CardFile {...file} />
               </li>
             ))}
-          </ul>
+          </ul> */}
     
       </div>
     </div>
