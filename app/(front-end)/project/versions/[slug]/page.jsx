@@ -8,20 +8,33 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import { List, LayoutGrid } from "lucide-react";
+import { List, LayoutGrid, UserPlus2 } from "lucide-react";
 import AvatarGroupComponent from "@/components/avatar-group";
-import ModalShareProject from "@/components/modal-share-project";
-import ModalAddFile from "@/components/modal-add-file";
+import AddMemberModal from "@/components/modals/modal-add-member";
+import ModalAddFile from "@/components/modals/modal-add-file";
 import TableFiles from "@/components/table-files";
 import { useState } from "react";
 
-function findById(arr, id) {
-  return arr.find((item) => item.id === id);
+function findModelById(jsonData, modelId) {
+  // Iterate over each project in the JSON data
+  for (let project of jsonData) {
+    // Iterate over each model in the current project
+    for (let model of project.Models) {
+      // Check if the current model's ID matches the provided modelId
+      if (model.id === modelId) {
+        // Return the model if the ID matches
+        return model;
+      }
+    }
+  }
+  // Return null if no matching model is found
+  return null;
 }
 
-export default function Project({ params }) {
+export default function Versions({ params }) {
   const [viewList, setViewList] = useState(false);
-  const project = findById(DataModel, params.slug);
+  const model = findModelById(DataModel, params.slug);
+  
   function handleClickGrid() {
     setViewList(false);
   }
@@ -33,7 +46,7 @@ export default function Project({ params }) {
       {/*------------------------>Avatars - Share- Add File Subheader------------------------*/}
       <div className="flex flex-row h-full justify-end gap-x-3 mb-4 ">
         <AvatarGroupComponent />
-        <ModalShareProject />
+        <AddMemberModal />
         <ModalAddFile />
       </div>
       {/*------------------------>Layour Options------------------------*/}
@@ -79,11 +92,11 @@ export default function Project({ params }) {
       {/*------------------------>Toggle View------------------------*/}
       {viewList ? (
         /*------------------------>File List View------------------------*/
-        <TableFiles  {...project.Models}/>
+        <TableFiles {...project.Models} />
       ) : (
         /*------------------------>File Grid View------------------------*/
         <ul role="list" className="flex flex-row flex-wrap gap-x-4 gap-y-4">
-          {project.Models.map((data) => (
+          {model.Versions.map((data) => (
             <li key={data.id}>
               <CardFile {...data} />
             </li>

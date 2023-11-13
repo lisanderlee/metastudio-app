@@ -8,9 +8,16 @@ import {
   Button,
   useDisclosure,
 } from "@nextui-org/react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ModalAddFile() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  
+  function handleClick() {
+    setOpen(false);
+    toast.success("File was succefully uploaded");
+  }
 
   return (
     <>
