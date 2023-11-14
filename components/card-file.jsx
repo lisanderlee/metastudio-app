@@ -21,6 +21,9 @@ import RenameModal from "./modals/modal-rename";
 import ShareFilePresentationModal from "./modals/modal-share-file-presentation";
 import AddNewVersionModal from "./modals/modal-add-new-version";
 import FileInformationModal from "./modals/modal-file-info";
+
+
+
 export default function CardFile({ ...props }) {
   const [showDelete, setShowDelete] = useState(false);
   const [showShareFileReview, setShowShareFileReview] = useState(false);
